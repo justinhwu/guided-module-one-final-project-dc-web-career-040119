@@ -41,11 +41,17 @@ class CommandLineInterface
     end
 
     def yesorno
-      choice = gets.chomp.upcase
-      if (choice != "Y".upcase && choice != "N".upcase)
+      stored_choice = ""
+      loop do
+        choice = gets.chomp.upcase
         puts ("Please enter a valid option.")
+        stored_choice = choice
+        break if choice == "Y" || choice =="N"
       end
-      choice
+      # if (choice != "Y".upcase && choice != "N".upcase)
+      #   puts ("Please enter a valid option.")
+      # end
+      stored_choice
     end
 
     def neighborhood_choice
