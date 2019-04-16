@@ -61,10 +61,10 @@ class CommandLineInterface
     end
 
     def price_choice
-      puts "1. $"
-      puts "2. $$"
-      puts "3. $$$"
-      puts "4. $$$$"
+      puts "$: $5-10"
+      puts "$$: $10-20"
+      puts "$$$: $20-30"
+      puts "$$$$: $30+"
     end
 
     def run
@@ -96,6 +96,16 @@ class CommandLineInterface
         @@customer_choices[:neighborhood_id] = neighborhood_num
       else
         @@customer_choices[:neighborhood_id] = nil
+      end
+
+      get_options_input
+      option = yesorno
+      if option == "Y"
+        price_choice
+        price_num = get_preference_input.to_s
+        @@customer_choices[:price_id] = price_num
+      else
+        @@customer_choices[:price_id] = nil
       end
       binding.pry
 
