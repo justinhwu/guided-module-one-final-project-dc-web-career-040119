@@ -42,9 +42,10 @@ class CommandLineInterface
 
     def yesorno
       choice = gets.chomp.upcase
-      if (choice != "Y".upcase || choice != "N".upcase)
+      if (choice != "Y".upcase && choice != "N".upcase)
         puts ("Please enter a valid option.")
       end
+      choice
     end
 
     def neighborhood_choice
@@ -68,7 +69,6 @@ class CommandLineInterface
       #Method to give user choice to answer Y or N
       option = yesorno
       #Outputs choices
-
       if option == "Y"
         choices
         cuisine_num = get_preference_input.to_i
