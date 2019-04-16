@@ -63,15 +63,28 @@ class CommandLineInterface
     def run
       welcome
       input = get_user_input
+      #Asks if user wants to choose a cuisine
       choose_cuisine_message(input)
-      yesorno
-      choices
-      cuisine_num = get_preference_input.to_i
+      #Method to give user choice to answer Y or N
+      option = yesorno
+      #Outputs choices
 
-      # neighborhood_num = some varaible
-      @@customer_choices[:customer_id] = cuisine_num
+      if option == "Y"
+        choices
+        cuisine_num = get_preference_input.to_i
+        @@customer_choices[:cuisine_id] = cuisine_num
+      else
+        @@customer_choices[:cuisine_id] = nil
+      end
+
+      #pushes choice to hash for customer_id
+
+
+      #Asks user if they want to further refine their choice
       get_options_input
-      if get_neighborhood_input == "Y"
+      #Conditional if user chooses to refine, will push option chosen into customer_choices hash
+      option = yesorno
+      if option == "Y"
         neighborhood_choice
         neighborhood_num = get_preference_input.to_i
         @@customer_choices[:neighborhood_id] = neighborhood_num
@@ -79,7 +92,7 @@ class CommandLineInterface
         @@customer_choices[:neighborhood_id] = nil
       end
       binding.pry
-      #Convert cuisie_id to the associated number chosen by user
+
 
       end
 
