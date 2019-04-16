@@ -1,3 +1,4 @@
+require "pry"
 class CommandLineInterface
 
 
@@ -10,7 +11,7 @@ class CommandLineInterface
     end
 
     def choices
-      puts "1. Chinese"
+      puts "8. Chinese"
       puts "2. Mexican"
       puts "3. American"
     end
@@ -25,8 +26,22 @@ class CommandLineInterface
       input = get_user_input
       puts "Hi, #{input}! What type of cuisine are you in the mood for? Please indicate your preference by typing in the corresponding number of your cuisine of choice!"
       choices
-      cuisine = get_cuisine_input
+      cuisine_num = get_cuisine_input.to_i
       puts "Great Choice"
+      #Convert cuisie_id to the associated number chosen by user
+      puts (find_chinese(cuisine_num))
+
+      end
+
+    def find_chinese(cuisine_num)
+
+      if cuisine_num == Restaurant.find_by(cuisine_id: 11).cuisine_id
+        Restaurant.where("cuisine_id = 11").map do |names|
+          names.name
+        end
+      else
+        "No restaurants exist for that cuisine"
+      end
 
     end
 
