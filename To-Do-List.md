@@ -6,3 +6,4 @@
   - Cheesecake Factory
   - TaKorean
   - Etc....
+5. Insert a max and min requirement for all choices to correspond with the id numbers for those selections (e.g., cuisine has max of 10 types of cuisine. If user selects, 11, reject input and ask for valid input.)
