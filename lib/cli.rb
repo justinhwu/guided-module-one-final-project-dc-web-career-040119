@@ -12,44 +12,23 @@ class CommandLineInterface
       puts "Welcome to Got Noms! What is your name?"
       input = gets.chomp
       puts "Hi, #{input}! Are you in the mood for a specific type of cuisine? Type 'Y' for yes. If you do not have a cuisine preference, please enter 'N'."
-
-       # What type of cuisine are you in the mood for? Please indicate your preference by typing in the corresponding number of your cuisine of choice!
     end
 
-    #Gets user name
-    # def get_user_input
-    #   input = gets.chomp
-    # end
-
-    # #Asks User for cuisine
-    # def choose_cuisine_message(input)
-    #   puts "Hi, #{input}! What type of cuisine are you in the mood for? Please indicate your preference by typing in the corresponding number of your cuisine of choice!"
-    #   puts "If you do not have a preference, please enter 'N'."
-    # end
-
-    #Outputs Cuisine choices
+    #Provides user with cuisine choices
     def choices
-      puts "1. Chinese"
-      puts "2. Mexican"
-      puts "3. American"
+      #will need to enter max. If user enters number not corresponding with list, prompt user again.
+      puts "1. American"
+      puts "2. Chinese"
+      puts "3. Mexican"
+      puts "4. Italian"
+      puts "5. Thai"
+      puts "Please enter your choice!"
     end
 
     #Gets user to input corresponding number to cuisine type
     def get_preference_input
       input = gets.chomp
     end
-
-    def get_neighborhood_input
-      puts "Great! Would you like to further refine by neighborhood? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
-      #build iterator that will allow for further refinement, but if user selects "n" then will end loop and return list of restaurants.
-    end
-
-    def get_price_input
-      puts "Great! Would you like to further refine by price? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
-      #build iterator that will allow for further refinement, but if user selects "n" then will end loop and return list of restaurants.
-    end
-
-
 
     def yesorno
       stored_choice = ""
@@ -61,79 +40,66 @@ class CommandLineInterface
         stored_choice = choice
         break if choice == "Y" || choice =="N"
       end
-      # if (choice != "Y".upcase && choice != "N".upcase)
-      #   puts ("Please enter a valid option.")
-      # end
       stored_choice
     end
 
+    def get_neighborhood_input
+      puts "Great! Would you like to further refine by neighborhood? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
+    end
+
+    def get_price_input
+      puts "Great! Would you like to further refine by price? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
+    end
+
+    def get_family_friendly_input
+      # puts "Great! Would you like to refine your restaurant based on family friendliness? If so, please enter 'Y'. If family friendliness does not factor into your decision-making, enter 'N'."
+      # puts "If you have no preference, please enter ''"
+      puts "Great! Would you like to further refine by family-friendliness? Please enter 'Y' if you would like to refine your choices or enter 'N' if you are satisfied with all of your preferences"
+    end
+
+    def family_friendly_choice
+      puts "Please enter '1' if you want a family friendly restaurnt. If you want a restaurant for just adults, please enter '0'"
+      input = gets.chomp.to_i
+    end
 
     def neighborhood_choice
-      puts "1. Dupont Circle"
-      puts "2. Clarendon"
+      puts "1. Gallery Place"
+      puts "2. Dupont Circle"
       puts "3. Metro Center"
+      puts "4. Clarendon"
+      puts "5. Adams Morgan"
+      puts "6. Cleveland Park"
+      puts "Please enter your choice!"
     end
 
     def price_choice
+      #limit to only enter dollar signs
       puts "$: $5-10"
       puts "$$: $10-20"
       puts "$$$: $20-30"
       puts "$$$$: $30+"
+      puts "Please enter your choice!"
     end
 
-    # def yesorno(input)
-    #
-    #   if input == "Y"
-    #
-    #
-    #   end
-    # end
-
-
-    # #Finds corresonding restaurants to cuisine type
-    # def find_cuisine(cuisine_num)
-    #   #will need to udate cuisine_ids when we finalize the database ids
-    #   #mexican
-    #   if cuisine_num == Restaurant.find_by(cuisine_id: 11).cuisine_id
-    #     mexican_restaurants = Restaurant.where("cuisine_id = 11")
-    #
-    #
-    #     #american
-    #   elsif cuisine_num == Restaurant.find_by(cuisine_id: 11).cuisine_id
-    #       Restaurant.where("cuisine_id = 11").map do |names|
-    #         names.name
-    #       end
-    #       #chinese
-    #     elsif cuisine_num == Restaurant.find_by(cuisine_id: 11).cuisine_id
-    #       Restaurant.where("cuisine_id = 11").map do |names|
-    #         names.name
-    #         #.... insert more cuisines as needed
-    #       end
-    #   else
-    #     "No restaurants exist for that cuisine"
-    #   end
-    # end
+    def get_restaurants(args = @@customer_choices)
+      Restaurant.where(args)
+    end
 
     def run
       welcome_and_cuisine
-      # input = get_user_input
-      #Asks if user wants to choose a cuisine
-      # choose_cuisine_message(input)
-      #Method to give user choice to answer Y or N
       option = yesorno
-      #Outputs choices
+      # if user selects "N," then stores value of 'nil' cuisine_id, else stores corresponding cuisine_id number in hash
       if option == "Y"
         choices
         cuisine_num = get_preference_input.to_i
         @@customer_choices[:cuisine_id] = cuisine_num
-      else
-        @@customer_choices[:cuisine_id] = nil
+      # else
+      #   @@customer_choices[:cuisine_id] = nil
       end
-
       #pushes choice to hash for customer_id
 
 
-      #Asks user if they want to further refine their choice
+      #Asks user if they want to further refine their choice by neighborhood
       get_neighborhood_input
       #Conditional if user chooses to refine, will push option chosen into customer_choices hash
       option = yesorno
@@ -141,20 +107,37 @@ class CommandLineInterface
         neighborhood_choice
         neighborhood_num = get_preference_input.to_i
         @@customer_choices[:neighborhood_id] = neighborhood_num
-      else
-        @@customer_choices[:neighborhood_id] = nil
+      # else
+      #   @@customer_choices[:neighborhood_id] = nil
       end
 
+      #asks user if they want to refine their choice by price
       get_price_input
       option = yesorno
       if option == "Y"
         price_choice
         price_num = get_preference_input.to_s
-        @@customer_choices[:price_id] = price_num
-      else
-        @@customer_choices[:price_id] = nil
+        @@customer_choices[:price] = price_num
+      # else
+      #   @@customer_choices[:price_id] = nil
       end
+
+      get_family_friendly_input
+        option = yesorno
+        if option == "Y"
+          choice = family_friendly_choice
+          if choice == 1
+            @@customer_choices[:family_friendly] = true
+          else
+            @@customer_choices[:family_friendly] = false
+          end
+        else
+          # @@customer_choices[:family_friendly_id] = nil
+          puts "Thanks for using Get Noms!"
+        end
+        get_restaurants
+
       binding.pry
     end
-
 end
+"hi"
