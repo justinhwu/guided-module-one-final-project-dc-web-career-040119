@@ -22,12 +22,22 @@ class CommandLineInterface
       puts "3. Mexican"
       puts "4. Italian"
       puts "5. Thai"
+      puts "6. Korean"
       puts "Please enter your choice!"
     end
 
     #Gets user to input corresponding number to cuisine type
     def get_preference_input
-      input = gets.chomp
+      stored_choice = ""
+      loop do
+        input = gets.chomp.to_i
+        if input <1 || input>6
+          puts ("That is not a valid option. Please choose again.")
+        end
+        stored_choice = input
+        break if input<=6 && input>=1
+      end
+      stored_choice.to_i
     end
 
     def yesorno
@@ -35,7 +45,7 @@ class CommandLineInterface
       loop do
         choice = gets.chomp.upcase
         if choice != "Y" && choice != "N"
-          puts ("Please enter a valid option.")
+          puts ("That is not a valid option. Please choose again.")
         end
         stored_choice = choice
         break if choice == "Y" || choice =="N"
@@ -59,7 +69,16 @@ class CommandLineInterface
 
     def family_friendly_choice
       puts "Please enter '1' if you want a family friendly restaurnt. If you want a restaurant for just adults, please enter '0'"
+      stored_choice = ""
+      loop do
       input = gets.chomp.to_i
+      if input != 1 && input != 0
+        puts ("That is not a valid option. Please choose again.")
+      end
+      stored_choice = input
+      break if input == 1 || input == 0
+      end
+      stored_choice
     end
 
     def neighborhood_choice
@@ -88,16 +107,27 @@ class CommandLineInterface
     def run
       welcome_and_cuisine
       option = yesorno
-      # if user selects "N," then stores value of 'nil' cuisine_id, else stores corresponding cuisine_id number in hash
       if option == "Y"
-        choices
-        cuisine_num = get_preference_input.to_i
-        @@customer_choices[:cuisine_id] = cuisine_num
-      # else
-      #   @@customer_choices[:cuisine_id] = nil
+        puts ("Are you in the mood for fusion food?")
+        option = yesorno
+      # if user selects "N," then stores value of 'nil' cuisine_id, else stores corresponding cuisine_id number in hash
+        if option == "Y"
+          choices
+          cuisine_num = get_preference_input.to_i
+          # After user chooses preferred cuisines (either 1 or 2), search join table where restaurant_id == the 2
+          @@customer_choices[:cuisine_id] = [cuisine_num]
+          puts("Please select another cuisine!")
+          choices
+          cuisine_num = get_preference_input.to_i
+          @@customer_choices[:cuisine_id] << cuisine_num
+        else
+          choices
+          cuisine_num = get_preference_input.to_i
+          @@customer_choices[:cuisine_id] = cuisine_num
+        end
       end
-      #pushes choice to hash for customer_id
 
+      #pushes choice to hash for customer_id
 
       #Asks user if they want to further refine their choice by neighborhood
       get_neighborhood_input
@@ -135,6 +165,7 @@ class CommandLineInterface
           # @@customer_choices[:family_friendly_id] = nil
           puts "Thanks for using Get Noms!"
         end
+        binding.pry
         get_restaurants
 
       binding.pry

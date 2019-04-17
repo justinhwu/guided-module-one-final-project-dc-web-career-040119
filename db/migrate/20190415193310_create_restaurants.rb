@@ -4,7 +4,6 @@ class CreateRestaurants < ActiveRecord::Migration[5.0]
     t.string :name
     t.string :price
     t.boolean :family_friendly
-    t.integer :cuisine_id
     t.integer :neighborhood_id
     end
   end
