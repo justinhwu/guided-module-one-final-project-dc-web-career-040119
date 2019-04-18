@@ -120,8 +120,20 @@ class CommandLineInterface
     end
 
     def get_restaurants(args = @@customer_choices, cuisine = @@cuisine_choices)
-      Restaurant.where(args).select(restaurant_id: ?)
-      # binding.pry
+      first_rest_filter = Restaurant.where(args)
+      cuisines_array = []
+      first_rest_filter.each do |restaurant|
+        cuisines_array << restaurant.cuisines
+      end
+      cuisines_array.flatten.select do |rest_obj|
+        
+      end
+      binding.pry
+
+      # first_rest_filter.select do
+      # first_cuisine = RestaurantCuisine.where(restaurant_id: rest_id).include?(@@cuisine_choices[0])
+      # second_cuisine = RestaurantCuisine.where(restaurant_id: rest_id).include?(@@cuisine_choices[1])
+
       # Restaurant.joins(:restaurant_cuisines.where(cuisine)
       # iterate through restaurants selecting for (args) THEN further iteration to find cuisine choices
 
