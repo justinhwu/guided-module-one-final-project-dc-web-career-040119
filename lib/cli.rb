@@ -10,7 +10,7 @@ class CommandLineInterface
     #Starts Program
     def welcome_and_cuisine
       puts "Welcome to Got Noms! What is your name?"
-      input = gets.chomp
+      input = gets.chomp.to_s
       puts "Hi, #{input}! Are you in the mood for a specific type of cuisine? Type 'Y' for yes. If you do not have a cuisine preference, please enter 'N'."
     end
 
@@ -37,8 +37,22 @@ class CommandLineInterface
         stored_choice = input
         break if input<=6 && input>=1
       end
-      stored_choice.to_i
+      stored_choice
     end
+
+    def get_price_input
+      stored_choice = ""
+      loop do
+        input = gets.chomp.to_s
+        if input != "$" && input != "$$" && input != "$$$" && input != "$$$$"
+          puts ("That is not a valid option. Please choose again.")
+        end
+        stored_choice = input
+        break if input == "$" || input == "$$" || input == "$$$" || input == "$$$$"
+      end
+      stored_choice
+    end
+
 
     def yesorno
       stored_choice = ""
@@ -57,7 +71,7 @@ class CommandLineInterface
       puts "Great! Would you like to further refine by neighborhood? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
     end
 
-    def get_price_input
+    def ask_price_input
       puts "Great! Would you like to further refine by price? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
     end
 
@@ -93,10 +107,10 @@ class CommandLineInterface
 
     def price_choice
       #limit to only enter dollar signs
-      puts "$: $5-10"
-      puts "$$: $10-20"
-      puts "$$$: $20-30"
-      puts "$$$$: $30+"
+      puts "$. $5-10"
+      puts "$$. $10-20"
+      puts "$$$. $20-30"
+      puts "$$$$. $30+"
       puts "Please enter your choice!"
     end
 
@@ -142,11 +156,11 @@ class CommandLineInterface
       end
 
       #asks user if they want to refine their choice by price
-      get_price_input
+      ask_price_input
       option = yesorno
       if option == "Y"
         price_choice
-        price_num = get_preference_input.to_s
+        price_num = get_price_input
         @@customer_choices[:price] = price_num
       # else
       #   @@customer_choices[:price_id] = nil
@@ -165,10 +179,9 @@ class CommandLineInterface
           # @@customer_choices[:family_friendly_id] = nil
           puts "Thanks for using Get Noms!"
         end
-        binding.pry
+
         get_restaurants
 
-      binding.pry
+
     end
 end
-"hi"
