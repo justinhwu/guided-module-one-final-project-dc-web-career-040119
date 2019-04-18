@@ -19,18 +19,6 @@ class CommandLineInterface
       puts "Hi, #{input}! Are you in the mood for a specific type of cuisine? Type 'Y' for yes. If you do not have a cuisine preference, please enter 'N'."
     end
 
-    #Provides user with cuisine choices
-    def choices
-      #will need to enter max. If user enters number not corresponding with list, prompt user again.
-      puts "1. American"
-      puts "2. Chinese"
-      puts "3. Mexican"
-      puts "4. Italian"
-      puts "5. Thai"
-      puts "6. Korean"
-      puts "Please enter your choice!"
-    end
-
     #Gets user to input corresponding number to cuisine type
     def get_preference_input
       stored_choice = ""
@@ -49,13 +37,15 @@ class CommandLineInterface
       stored_choice = ""
       loop do
         input = gets.chomp.to_s
-        if input != "$" && input != "$$" && input != "$$$" && input != "$$$$"
-          puts ("That is not a valid option. Please choose again.")
+        price_array = ["$", "$$", "$$$", "$$$$"]
+        if !price_array.include?(input)
+          # input != "$" && input != "$$" && input != "$$$" && input != "$$$$"
+          puts ("That is not a valid option. Please input the $ symbol in accordance with the provided options.")
         end
         stored_choice = input
-        break if input == "$" || input == "$$" || input == "$$$" || input == "$$$$"
+        break if price_array.include?(stored_choice)
       end
-      stored_choice
+      stored_choice.to_s
     end
 
 
@@ -64,7 +54,7 @@ class CommandLineInterface
       loop do
         choice = gets.chomp.upcase
         if choice != "Y" && choice != "N"
-          puts ("That is not a valid option. Please choose again.")
+          puts ("That is not a valid option. Please type 'Y' for YES and 'N' for NO.")
         end
         stored_choice = choice
         break if choice == "Y" || choice =="N"
@@ -92,7 +82,7 @@ class CommandLineInterface
       loop do
       input = gets.chomp.to_i
       if input != 1 && input != 0
-        puts ("That is not a valid option. Please choose again.")
+        puts ("That is not a valid option. Please type 'Y' for YES and 'N' for NO.")
       end
       stored_choice = input
       break if input == 1 || input == 0
@@ -119,16 +109,68 @@ class CommandLineInterface
       puts "Please enter your choice!"
     end
 
-    def get_restaurants(args = @@customer_choices, cuisine = @@cuisine_choices)
-      first_rest_filter = Restaurant.where(args)
-      cuisines_array = []
-      first_rest_filter.each do |restaurant|
-        cuisines_array << restaurant.cuisines
+    #Provides user with cuisine choices
+    def choices
+      #will need to enter max. If user enters number not corresponding with list, prompt user again.
+      puts "1. American"
+      puts "2. Chinese"
+      puts "3. Mexican"
+      puts "4. Italian"
+      puts "5. Thai"
+      puts "6. Korean"
+      puts "Please enter your choice!"
+    end
+
+    def get_restaurants(args = @@customer_choices, cuisines = @@cuisine_choices)
+
+      if args.size != 0 || cuisines.size !=0
+                first_rest_filter = Restaurant.where(args)
+
+
+                rest_hash = {}
+                first_rest_filter.each do |restaurant|
+                  restaurant.cuisines.each do |ids|
+                    if rest_hash.has_key?(restaurant.name)
+                      rest_hash[restaurant.name] << ids.id
+                    else
+                      rest_hash[restaurant.name] = [ids.id]
+                    end
+                  end
+                end
+
+                rest_names = []
+                rest_hash.each do |key, value|
+                  if cuisines.size == 2 && value == cuisines || value == cuisines.reverse
+                    rest_names << key
+                  elsif cuisines.size == 1 && value.include?(cuisines.join.to_i)
+                    # binding.pry
+                    rest_names << key
+                  end
+                end
+                # binding.pry
+                if cuisines.size !=0 && first_rest_filter.size !=0 && rest_names.size != 0
+                  rest_names
+                elsif cuisines.size == 0
+                  first_rest_filter.map do |object|
+                    # binding.pry
+                    object.name
+                  end
+                else
+                  "There were no restaurants matching your criteria! Please try again."
+                end
+
+      else
+        Restaurant.all.map do |all_restaurants|
+          all_restaurants.name
+        end
       end
-      cuisines_array.flatten.select do |rest_obj|
-        
-      end
-      binding.pry
+
+
+      # binding.pry
+      # .flatten.select do |rest_obj|
+      #
+      # end
+
 
       # first_rest_filter.select do
       # first_cuisine = RestaurantCuisine.where(restaurant_id: rest_id).include?(@@cuisine_choices[0])
@@ -148,7 +190,7 @@ class CommandLineInterface
       welcome_and_cuisine
       option = yesorno
       if option == "Y"
-        puts ("Are you in the mood for fusion food?")
+        puts ("Are you in the mood for fusion food?\n")
         option = yesorno
       #If user says yes, then we will store 2 different cuisine types in an array
         if option == "Y"
@@ -205,8 +247,9 @@ class CommandLineInterface
             @@customer_choices[:family_friendly] = false
           end
         end
+        puts get_restaurants
         puts "Thanks for using Get Noms!"
-        get_restaurants
-        binding.pry
+
+        # binding.pry
     end
 end
