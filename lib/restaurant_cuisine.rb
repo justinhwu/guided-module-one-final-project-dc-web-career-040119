@@ -1,4 +1,4 @@
-class RestaurantCuisines< ActiveRecord::Base
-  belongs_to :restaurants
-  belongs_to :cuisines
+class RestaurantCuisine < ActiveRecord::Base
+  belongs_to :restaurant
+  belongs_to :cuisine
 end

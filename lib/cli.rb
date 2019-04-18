@@ -2,9 +2,14 @@ require "pry"
 class CommandLineInterface
 
     @@customer_choices = {}
+    @@cuisine_choices = []
 
     def self.customer_choices
       @@customer_choices
+    end
+
+    def self.cuisine_choices
+      @@cuisine_choices
     end
 
     #Starts Program
@@ -114,9 +119,18 @@ class CommandLineInterface
       puts "Please enter your choice!"
     end
 
-    def get_restaurants(args = @@customer_choices)
-      Restaurant.where(args)
+    def get_restaurants(args = @@customer_choices, cuisine = @@cuisine_choices)
+      Restaurant.where(args).select(restaurant_id: ?)
+      # binding.pry
+      # Restaurant.joins(:restaurant_cuisines.where(cuisine)
+      # iterate through restaurants selecting for (args) THEN further iteration to find cuisine choices
+
     end
+
+
+    # def match_rest_cuisine(args = @@cuisine_choices)
+    #   RestaurantCuisines.pluck(args)
+    # end
 
     def run
       welcome_and_cuisine
@@ -124,22 +138,25 @@ class CommandLineInterface
       if option == "Y"
         puts ("Are you in the mood for fusion food?")
         option = yesorno
-      # if user selects "N," then stores value of 'nil' cuisine_id, else stores corresponding cuisine_id number in hash
+      #If user says yes, then we will store 2 different cuisine types in an array
         if option == "Y"
           choices
           cuisine_num = get_preference_input.to_i
           # After user chooses preferred cuisines (either 1 or 2), search join table where restaurant_id == the 2
-          @@customer_choices[:cuisine_id] = [cuisine_num]
+          @@cuisine_choices << cuisine_num
           puts("Please select another cuisine!")
           choices
           cuisine_num = get_preference_input.to_i
-          @@customer_choices[:cuisine_id] << cuisine_num
+          @@cuisine_choices << cuisine_num
         else
           choices
           cuisine_num = get_preference_input.to_i
-          @@customer_choices[:cuisine_id] = cuisine_num
+          @@cuisine_choices << cuisine_num
         end
       end
+
+
+      # binding.pry
 
       #pushes choice to hash for customer_id
 
@@ -175,13 +192,9 @@ class CommandLineInterface
           else
             @@customer_choices[:family_friendly] = false
           end
-        else
-          # @@customer_choices[:family_friendly_id] = nil
-          puts "Thanks for using Get Noms!"
         end
-
+        puts "Thanks for using Get Noms!"
         get_restaurants
-
-
+        binding.pry
     end
 end
