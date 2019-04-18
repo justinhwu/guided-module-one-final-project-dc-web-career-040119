@@ -25,7 +25,7 @@ class CommandLineInterface
       loop do
         input = gets.chomp.to_i
         if input <1 || input>6
-          puts ("That is not a valid option. Please choose again.")
+          puts ("That is not a valid option. Please choose a number between 1 and 6.")
         end
         stored_choice = input
         break if input<=6 && input>=1
@@ -200,8 +200,17 @@ class CommandLineInterface
           @@cuisine_choices << cuisine_num
           puts("Please select another cuisine!")
           choices
-          cuisine_num = get_preference_input.to_i
-          @@cuisine_choices << cuisine_num
+          second_cuisine_num = ""
+          loop do
+             input = get_preference_input.to_i
+             if input == cuisine_num
+               puts("You have already chosen that cuisine. Please select a different cuisine.")
+             end
+             second_cuisine_num = input
+             break if input != cuisine_num
+           end
+          second_cuisine_num.to_i
+          @@cuisine_choices << second_cuisine_num
         else
           choices
           cuisine_num = get_preference_input.to_i
