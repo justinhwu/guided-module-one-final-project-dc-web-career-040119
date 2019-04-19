@@ -174,19 +174,6 @@ class CommandLineInterface
       end
 
 
-      # binding.pry
-      # .flatten.select do |rest_obj|
-      #
-      # end
-
-
-      # first_rest_filter.select do
-      # first_cuisine = RestaurantCuisine.where(restaurant_id: rest_id).include?(@@cuisine_choices[0])
-      # second_cuisine = RestaurantCuisine.where(restaurant_id: rest_id).include?(@@cuisine_choices[1])
-
-      # Restaurant.joins(:restaurant_cuisines.where(cuisine)
-      # iterate through restaurants selecting for (args) THEN further iteration to find cuisine choices
-
     end
 
     def choosing_cuisines
