@@ -69,7 +69,7 @@ class CommandLineInterface
     end
 
     def family_friendly_choice
-      puts "Please enter '1' if you want a family friendly restaurnt. If you want a restaurant for just adults, please enter '0'"
+      puts "Please enter '1' if you want a family friendly restaurant. If you want a restaurant for just adults, please enter '0'"
       stored_choice = ""
       loop do
       input = gets.chomp.to_i
@@ -179,7 +179,7 @@ class CommandLineInterface
     def choosing_cuisines
       cuisine_perference = yesorno
       if cuisine_perference == "Y"
-        puts ("Are you in the mood for fusion food?\n")
+        puts ("Are you in the mood for fusion food? Please type 'Y' for YES and 'N' for NO.")
           fusion_decision = yesorno
       #If user says yes, then we will store 2 different cuisine types in an array
         if fusion_decision == "Y"
