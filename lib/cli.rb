@@ -15,7 +15,7 @@ class CommandLineInterface
     #Starts Program
     def welcome_and_cuisine
       puts "Welcome to Got Noms! What is your name?"
-      input = gets.chomp.to_s
+      input = gets.chomp
       puts "Hi, #{input}! Are you in the mood for a specific type of cuisine? Type 'Y' for yes. If you do not have a cuisine preference, please enter 'N'."
     end
 
@@ -25,7 +25,7 @@ class CommandLineInterface
       loop do
         input = gets.chomp.to_i
         if input <1 || input>6
-          puts ("That is not a valid option. Please choose a number between 1 and 6.")
+          puts ("That is not a valid option. Please choose a number between 1 and 6. Here are the options for your reference.")
         end
         stored_choice = input
         break if input<=6 && input>=1
@@ -40,7 +40,8 @@ class CommandLineInterface
         price_array = ["$", "$$", "$$$", "$$$$"]
         if !price_array.include?(input)
           # input != "$" && input != "$$" && input != "$$$" && input != "$$$$"
-          puts ("That is not a valid option. Please input the $ symbol in accordance with the provided options.")
+          puts ("That is not a valid option. Please input the '$' symbol in accordance with the provided options. Here are the options for your reference.")
+          price_choice
         end
         stored_choice = input
         break if price_array.include?(stored_choice)
@@ -62,18 +63,9 @@ class CommandLineInterface
       stored_choice
     end
 
-    def get_neighborhood_input
-      puts "Great! Would you like to further refine by neighborhood? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
-    end
-
-    def ask_price_input
-      puts "Great! Would you like to further refine by price? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
-    end
-
-    def get_family_friendly_input
-      # puts "Great! Would you like to refine your restaurant based on family friendliness? If so, please enter 'Y'. If family friendliness does not factor into your decision-making, enter 'N'."
-      # puts "If you have no preference, please enter ''"
-      puts "Great! Would you like to further refine by family-friendliness? Please enter 'Y' if you would like to refine your choices or enter 'N' if you are satisfied with all of your preferences"
+    def user_preference(num)
+      preference_options = [ "neighborhood", "price", "family-friendliness" ]
+      puts "Great! Would you like to further refine by #{preference_options[num]}? If so, please enter 'Y'. If you are satisfied with your selection please enter 'N.'"
     end
 
     def family_friendly_choice
@@ -82,7 +74,7 @@ class CommandLineInterface
       loop do
       input = gets.chomp.to_i
       if input != 1 && input != 0
-        puts ("That is not a valid option. Please type 'Y' for YES and 'N' for NO.")
+        puts ("That is not a valid option. Please type 'Y' for YES and 'N' for NO. Here are the options for your reference.")
       end
       stored_choice = input
       break if input == 1 || input == 0
@@ -90,34 +82,43 @@ class CommandLineInterface
       stored_choice
     end
 
+    def get_preference_names(table_name)
+      table_name.all.map do |names|
+        names.name
+      end
+    end
+
     def neighborhood_choice
-      puts "1. Gallery Place"
-      puts "2. Dupont Circle"
-      puts "3. Metro Center"
-      puts "4. Clarendon"
-      puts "5. Adams Morgan"
-      puts "6. Cleveland Park"
+      neighborhood_names = get_preference_names(Neighborhood)
+      neighborhood_names.each_with_index do |names, index|
+        puts "#{index+1}. #{names}"
+      end
       puts "Please enter your choice!"
+    end
+
+    def get_price_values
+      Restaurant.all.map do |names|
+        names.price
+      end.uniq.sort
     end
 
     def price_choice
       #limit to only enter dollar signs
-      puts "$. $5-10"
-      puts "$$. $10-20"
-      puts "$$$. $20-30"
-      puts "$$$$. $30+"
+      price_names = get_price_values
+      price_points = ["$5-10", "$10-20", "$20-30", "$30+"]
+      price_names.each_with_index do |names, index|
+        puts "#{index+1}. #{names} #{price_points[index]}"
+      end
       puts "Please enter your choice!"
     end
 
     #Provides user with cuisine choices
     def choices
       #will need to enter max. If user enters number not corresponding with list, prompt user again.
-      puts "1. American"
-      puts "2. Chinese"
-      puts "3. Mexican"
-      puts "4. Italian"
-      puts "5. Thai"
-      puts "6. Korean"
+      cuisine_names = get_preference_names(Cuisine)
+      cuisine_names.each_with_index do |names, index|
+        puts "#{index+1}. #{names}"
+      end
       puts "Please enter your choice!"
     end
 
@@ -149,20 +150,27 @@ class CommandLineInterface
                 end
                 # binding.pry
                 if cuisines.size !=0 && first_rest_filter.size !=0 && rest_names.size != 0
-                  rest_names
+                  rest_names.sort.each_with_index do |name, index|
+                    puts "#{index+1}. #{name}"
+                  end
                 elsif cuisines.size == 0
-                  first_rest_filter.map do |object|
+                  no_cuisine = first_rest_filter.map do |object|
                     # binding.pry
                     object.name
+                  end.sort
+                  list = no_cuisine.each_with_index do |name, index|
+                    puts "#{index+1}. #{name}"
                   end
+                  return list
                 else
-                  "There were no restaurants matching your criteria! Please try again."
+                  puts ("There were no restaurants matching your criteria! Please try again.")
                 end
 
       else
-        Restaurant.all.map do |all_restaurants|
-          all_restaurants.name
+        list = get_preference_names(Restaurant).sort.each_with_index do |list_name, index|
+          puts "#{index+1}. #{list_name}"
         end
+        list
       end
 
 
@@ -181,19 +189,13 @@ class CommandLineInterface
 
     end
 
-
-    # def match_rest_cuisine(args = @@cuisine_choices)
-    #   RestaurantCuisines.pluck(args)
-    # end
-
-    def run
-      welcome_and_cuisine
-      option = yesorno
-      if option == "Y"
+    def choosing_cuisines
+      cuisine_perference = yesorno
+      if cuisine_perference == "Y"
         puts ("Are you in the mood for fusion food?\n")
-        option = yesorno
+          fusion_decision = yesorno
       #If user says yes, then we will store 2 different cuisine types in an array
-        if option == "Y"
+        if fusion_decision == "Y"
           choices
           cuisine_num = get_preference_input.to_i
           # After user chooses preferred cuisines (either 1 or 2), search join table where restaurant_id == the 2
@@ -217,36 +219,32 @@ class CommandLineInterface
           @@cuisine_choices << cuisine_num
         end
       end
+    end
 
-
-      # binding.pry
-
-      #pushes choice to hash for customer_id
-
+    def choosing_neighborhood
       #Asks user if they want to further refine their choice by neighborhood
-      get_neighborhood_input
+      user_preference(0)
       #Conditional if user chooses to refine, will push option chosen into customer_choices hash
       option = yesorno
       if option == "Y"
         neighborhood_choice
         neighborhood_num = get_preference_input.to_i
         @@customer_choices[:neighborhood_id] = neighborhood_num
-      # else
-      #   @@customer_choices[:neighborhood_id] = nil
       end
+    end
 
-      #asks user if they want to refine their choice by price
-      ask_price_input
+    def choosing_price
+      user_preference(1)
       option = yesorno
       if option == "Y"
         price_choice
         price_num = get_price_input
         @@customer_choices[:price] = price_num
-      # else
-      #   @@customer_choices[:price_id] = nil
       end
+    end
 
-      get_family_friendly_input
+    def choosing_ff
+      user_preference(2)
         option = yesorno
         if option == "Y"
           choice = family_friendly_choice
@@ -256,9 +254,21 @@ class CommandLineInterface
             @@customer_choices[:family_friendly] = false
           end
         end
-        puts get_restaurants
-        puts "Thanks for using Get Noms!"
+    end
 
-        # binding.pry
+    def run
+      welcome_and_cuisine
+
+      choosing_cuisines
+
+      choosing_neighborhood
+
+      choosing_price
+
+      choosing_ff
+
+      get_restaurants
+      puts "Thanks for using Get Noms!"
+
     end
 end
